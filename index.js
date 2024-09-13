@@ -108,7 +108,7 @@ app.use("/api/media", mediaRoutes);
 require("./App/Config/websocket")(io);
 
 // Configuration for database and port connection
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 mongoose
     .connect(process.env.DATABASE_URL, {})
     .then(() => {

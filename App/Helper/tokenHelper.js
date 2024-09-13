@@ -5,7 +5,7 @@ const { encrypt, decrypt } = require('./encryption');
 const generateTokens = (payload) => {
     // Generate an access token
     function generateAccessToken(payload) {
-        return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '15m' }); // Increased to 15 minutes
+        return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1m' }); // Increased to 15 minutes
     }
 
     // Generate a refresh token
@@ -14,7 +14,7 @@ const generateTokens = (payload) => {
             crypto: crypto.randomBytes(40).toString('hex'),
             payload
         };
-        return jwt.sign(initialRefreshToken, process.env.JWT_SECRET, { expiresIn: '7d' }); // Increased to 7 days
+        return jwt.sign(initialRefreshToken, process.env.JWT_SECRET, { expiresIn: '5m' }); // Increased to 7 days
     }
 
     //Encrypt the access token and refresh token
