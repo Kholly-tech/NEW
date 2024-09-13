@@ -8,6 +8,7 @@ const { getSession, updateSession, refreshSession } = require('../Helper/session
 const { generateDeviceFingerprint } = require('../Helper/deviceFingerprint');
 
 const authenticateSession = async(req, res, next) => {
+    let regularUpdatedUser;
     try {
         const authHeader = req.headers;
         const token = authHeader['authorization'];
@@ -68,7 +69,7 @@ const authenticateSession = async(req, res, next) => {
         const decodedRefreshToken = verifyRefreshToken(refreshToken);
         if (!decodedRefreshToken || foundUser._id.toString() !== decodedRefreshToken.payload.userId) {
             foundUser.refreshToken = foundUser.refreshToken.filter(rt => rt.token !== refreshToken);
-            await foundUser.save();
+            regularUpdatedUser = await foundUser.save();
             return res.status(403).json({ message: 'Forbidden - 5' });
         }
 
@@ -80,9 +81,9 @@ const authenticateSession = async(req, res, next) => {
         }
         const { accessToken, newRefreshToken } = refreshResult;
 
-        foundUser.refreshToken = foundUser.refreshToken.filter(rt => rt.token !== refreshToken);
-        foundUser.refreshToken.push({ token: newRefreshToken, deviceFingerprint: hashedDeviceFingerprint });
-        await foundUser.save();
+        regularUpdatedUser.refreshToken = regularUpdatedUser.refreshToken.filter(rt => rt.token !== refreshToken);
+        regularUpdatedUser.refreshToken.push({ token: newRefreshToken, deviceFingerprint: hashedDeviceFingerprint });
+        let result = await regularUpdatedUser.save();
 
         res.cookie("srft_token", newRefreshToken, {
             httpOnly: true,
@@ -90,7 +91,7 @@ const authenticateSession = async(req, res, next) => {
             secure: true,
         });
 
-        req.user = foundUser;
+        req.user = result;
         req.user.newToken = accessToken;
         next();
     } catch (error) {

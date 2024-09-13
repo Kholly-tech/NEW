@@ -42,6 +42,7 @@ const verifyRefreshToken = (encryptedRefreshToken) => {
         const decryptRefreshToken = decrypt(encryptedRefreshToken);
         console.log("Decrypted Refresh Token:", decryptRefreshToken);
         const decodedRefreshToken = jwt.verify(decryptRefreshToken, process.env.JWT_SECRET);
+        console.log("decodedRefreshToken : ", decodedRefreshToken);
         return decodedRefreshToken;
     } catch (error) {
         console.log("Refresh Token verification failed:", error.message);
