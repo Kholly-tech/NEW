@@ -50,9 +50,11 @@ router.get(
             return res.redirect(`${process.env.CLIENT_URL}/signin?error=MissingData`);
         }
         let deviceFingerprint = await generateDeviceFingerprint(req);
-        deviceFingerprint = await bcrypt.hash(deviceFingerprint, 10);
-        const { accessToken, refreshToken } = generateTokens({ userId: user.id });
-        user.refreshToken.push(refreshToken);
+        const hashedDeviceFingerprint = await bcrypt.hash(deviceFingerprint, 10);
+        const { accessToken, refreshToken } = generateTokens({ userId: user.id, deviceFingerprint: hashedDeviceFingerprint });
+
+        // Save refresh token and hashed device fingerprint
+        user.refreshToken.push({ token: refreshToken, deviceFingerprint: hashedDeviceFingerprint });
         await user.save();
 
         // Remove sensitive information

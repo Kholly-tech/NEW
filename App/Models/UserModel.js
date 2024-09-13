@@ -127,7 +127,7 @@ const userSchema = mongoose.Schema({
     twoFactorSecret: {
         type: String,
     },
-    refreshToken: [{}],
+    refreshToken: [],
     details: {
         bio: String,
         workPlace: {

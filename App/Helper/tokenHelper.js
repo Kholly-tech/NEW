@@ -5,7 +5,7 @@ const { encrypt, decrypt } = require('./encryption');
 const generateTokens = (payload) => {
     // Generate an access token
     function generateAccessToken(payload) {
-        return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2m' }); // Increased to 15 minutes
+        return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '20m' }); // Increased to 15 minutes
     }
 
     // Generate a refresh token
@@ -14,7 +14,7 @@ const generateTokens = (payload) => {
             crypto: crypto.randomBytes(40).toString('hex'),
             payload
         };
-        return jwt.sign(initialRefreshToken, process.env.JWT_SECRET, { expiresIn: '10m' }); // Increased to 7 days
+        return jwt.sign(initialRefreshToken, process.env.JWT_SECRET, { expiresIn: '1d' }); // Increased to 1 days
     }
 
     //Encrypt the access token and refresh token
@@ -42,7 +42,7 @@ const verifyRefreshToken = (encryptedRefreshToken) => {
         const decryptRefreshToken = decrypt(encryptedRefreshToken);
         console.log("Decrypted Refresh Token:", decryptRefreshToken);
         const decodedRefreshToken = jwt.verify(decryptRefreshToken, process.env.JWT_SECRET);
-        console.log("decodedRefreshToken : ", decodedRefreshToken);
+        console.log("decodedRefreshToken :", decodedRefreshToken);
         return decodedRefreshToken;
     } catch (error) {
         console.log("Refresh Token verification failed:", error.message);
